@@ -86,6 +86,7 @@ The game is fully verifiable outside the browser with the vendored
 microScript v2 engine (see `vendor/microscript-v2/`):
 
 ```bash
+node test/charset.js    # glyph blitting regression tests (solid/mixed/full-width cells)
 node test/gameplay.js   # full gameplay scenario: mine, craft, place, light, die, restart
 node test/play.js       # playthrough + PNG snapshots + palette assertion
 python3 tools/genchars.py && python3 tools/preview_glyphs.py   # regenerate charset + previews

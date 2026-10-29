@@ -75,8 +75,9 @@ initRender = function()
   buildGlyphRuns()
 end
 
-// Convert CHARROM digit strings into horizontal runs for fast blitting.
-// ink digit -> 0 bg, 1 white, 2 accent, 3 main.
+// Convert CHARROM digit strings into per-pixel ink tables for blitting.
+// GLYPH_RUNS[glyph][row] is a flat list of 4 ink digits (0 bg, 1 white,
+// 2 accent, 3 main) - one per fat pixel column.
 buildGlyphRuns = function()
   GLYPH_RUNS = []
   local i = 0
@@ -85,18 +86,13 @@ buildGlyphRuns = function()
     local g = CHARROM[i]
     local r = 0
     while r < 8
-      local rowRuns = []
+      local rowInks = []
       local c = 0
       while c < 4
-        local ink = g.charCodeAt(r * 4 + c) - 48
-        local c2 = c
-        while c2 < 4 and g.charCodeAt(r * 4 + c2) - 48 == ink
-          c2 = c2 + 1
-        end
-        rowRuns.push([c, c2 - c, ink])
-        c = c2
+        rowInks.push(g.charCodeAt(r * 4 + c) - 48)
+        c = c + 1
       end
-      runs.push(rowRuns)
+      runs.push(rowInks)
       r = r + 1
     end
     GLYPH_RUNS.push(runs)
@@ -436,10 +432,10 @@ blitCells = function()
         end
         local c = 0
         while c < 4
-          local ink = rowRuns[c][2]
+          local ink = rowRuns[c]
           local fromOv = 0
-          if ovRuns != null and ovRuns[c][2] > 0 then
-            ink = ovRuns[c][2]
+          if ovRuns != null and ovRuns[c] > 0 then
+            ink = ovRuns[c]
             fromOv = 1
           end
           local col = resolveInk(ink, main, accent, ovMain[i], ovAccent[i], bg, light, fromOv)

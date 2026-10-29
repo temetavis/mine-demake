@@ -117,13 +117,15 @@ call("doCraft");
 check(g.inv.some((s) => s.id === 211), "crafted stone pick");
 
 // ---- torch placement and lighting ----
+// place against the stone floor (adjacent solid tile below guarantees
+// the "must touch something" rule, independent of world seed)
 const torchIdx = g.inv.findIndex((s) => s.id === 14);
 g.sel = Math.min(torchIdx, 7);
-const torchPlaced = call("placeTile", TX - 1, 32);
-check(torchPlaced === 1 && g.world[32][TX - 1] === 14, "torch placed");
+const torchPlaced = call("placeTile", TX - 1, 33);
+check(torchPlaced === 1 && g.world[33][TX - 1] === 14, "torch placed");
 r.frame();
-check(g.lightMap[32][TX - 1] === 3, "torch emits light 3");
-check(g.lightMap[31][TX - 1] >= 2, "light spreads above torch");
+check(g.lightMap[33][TX - 1] === 3, "torch emits light 3");
+check(g.lightMap[32][TX - 1] >= 2, "light spreads above torch");
 
 // ---- physics: walk left along the floor (right side has the table) ----
 r.env.keyboard.LEFT = 1;
