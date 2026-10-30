@@ -64,6 +64,12 @@ craftSel = 0
 // ------------------------- lifecycle ------------------------------
 
 init = function()
+  // Build the data tables first: microStudio runs source files in
+  // network-arrival order, so anything referencing T/I/GL/CR from another
+  // file must be built HERE (init runs after ALL files are loaded),
+  // not at the top level of a file.
+  defineTiles()
+  defineRecipes()
   G.time = 0
   G.scene = "title"
   G.deathCount = 0
@@ -206,7 +212,6 @@ defineRecipes = function()
   recipedef(I.PICK_IRON, 1, [[I.IRON, 3], [I.STICK, 2]], 1)
   recipedef(I.SWORD_IRON, 1, [[I.IRON, 2], [I.STICK, 1]], 1)
 end
-defineRecipes()
 
 // craftable list cached when the menu opens
 craftList = []

@@ -78,246 +78,257 @@ tiledef = function(def)
   TILES.push(def)
 end
 
-tiledef(object
-  id = T.AIR
-  name = "air"
-  glyph = 0
-  main = CR.BLACK
-  solid = 0
-  bg = 1
-end)
-tiledef(object
-  id = T.GRASS
-  name = "grass"
-  glyph = GL.grass
-  main = CR.GREEN
-  accent = CR.BROWN
-  solid = 1
-  hard = 0
-  drop = T.DIRT
-end)
-tiledef(object
-  id = T.DIRT
-  name = "dirt"
-  glyph = GL.dirt
-  main = CR.BROWN
-  solid = 1
-  hard = 0
-  drop = T.DIRT
-end)
-tiledef(object
-  id = T.STONE
-  name = "stone"
-  glyph = GL.stone
-  main = CR.DKGRY
-  accent = CR.MDGRY
-  solid = 1
-  hard = 1
-  drop = T.STONE
-end)
-tiledef(object
-  id = T.BEDROCK
-  name = "bedrock"
-  glyph = GL.bedrock
-  main = CR.DKGRY
-  accent = CR.BLACK
-  solid = 1
-  hard = 99
-  drop = 0
-end)
-tiledef(object
-  id = T.SAND
-  name = "sand"
-  glyph = GL.sand
-  main = CR.YELLOW
-  accent = CR.BROWN
-  solid = 1
-  hard = 0
-  drop = T.SAND
-end)
-tiledef(object
-  id = T.GRAVEL
-  name = "gravel"
-  glyph = GL.gravel
-  main = CR.MDGRY
-  accent = CR.DKGRY
-  solid = 1
-  hard = 1
-  drop = T.GRAVEL
-end)
-tiledef(object
-  id = T.COAL
-  name = "coal ore"
-  glyph = GL.coal
-  main = CR.DKGRY
-  accent = CR.BLACK
-  solid = 1
-  hard = 2
-  drop = I.COAL
-end)
-tiledef(object
-  id = T.IRON
-  name = "iron ore"
-  glyph = GL.iron
-  main = CR.DKGRY
-  accent = CR.WHITE
-  solid = 1
-  hard = 2
-  drop = I.IRON
-end)
-tiledef(object
-  id = T.GOLD
-  name = "gold ore"
-  glyph = GL.gold
-  main = CR.DKGRY
-  accent = CR.YELLOW
-  solid = 1
-  hard = 3
-  drop = I.GOLD
-end)
-tiledef(object
-  id = T.DIAMOND
-  name = "diamond ore"
-  glyph = GL.diamond
-  main = CR.DKGRY
-  accent = CR.CYAN
-  solid = 1
-  hard = 3
-  drop = I.DIAMOND
-end)
-tiledef(object
-  id = T.WOOD
-  name = "wood"
-  glyph = GL.wood
-  main = CR.BROWN
-  accent = CR.DKBRN
-  solid = 1
-  hard = 0
-  drop = T.WOOD
-end)
-tiledef(object
-  id = T.LEAVES
-  name = "leaves"
-  glyph = GL.leaves
-  main = CR.GREEN
-  accent = CR.LTGRN
-  solid = 1
-  hard = 0
-  drop = I.STICK
-end)
-tiledef(object
-  id = T.PLANKS
-  name = "planks"
-  glyph = GL.planks
-  main = CR.LTRED
-  accent = CR.BROWN
-  solid = 1
-  hard = 0
-  drop = T.PLANKS
-  climb = 0
-end)
-tiledef(object
-  id = T.TORCH
-  name = "torch"
-  glyph = GL.torch
-  main = CR.BROWN
-  accent = CR.YELLOW
-  solid = 0
-  hard = 0
-  drop = T.TORCH
-  light = 3
-end)
-tiledef(object
-  id = T.CRAFT
-  name = "crafting table"
-  glyph = GL.craft
-  main = CR.LTRED
-  accent = CR.BROWN
-  solid = 1
-  hard = 0
-  drop = T.CRAFT
-end)
-tiledef(object
-  id = T.LADDER
-  name = "ladder"
-  glyph = GL.ladder
-  main = CR.BROWN
-  solid = 0
-  hard = 0
-  drop = T.LADDER
-  climb = 1
-end)
-tiledef(object
-  id = T.WATER
-  name = "water"
-  glyph = GL.water0
-  main = CR.BLUE
-  accent = CR.LTBLU
-  solid = 0
-  liquid = 1
-  hard = 99
-  drop = 0
-end)
-tiledef(object
-  id = T.LAVA
-  name = "lava"
-  glyph = GL.lava0
-  main = CR.RED
-  accent = CR.YELLOW
-  solid = 0
-  liquid = 1
-  hard = 99
-  drop = 0
-  light = 3
-end)
-
-// fast lookup: tile id -> definition
-tileInfo = function(id)
-  return TILES[id]
-end
-
-isSolid = function(id)
-  if id == 0 then
-    return 0
+// Populates TILES and ITEMS. Called from init() (in 5_game.ms) so the
+// data tables are only built once ALL source files are loaded -
+// microStudio runs source files in network-arrival order, so
+// top-level calls here could run before 0_core/1_charset define
+// T, I, GL and CR.
+defineTiles = function()
+  TILES = []
+  ITEMS = object
   end
-  return TILES[id].solid
-end
+  tiledef(object
+    id = T.AIR
+    name = "air"
+    glyph = 0
+    main = CR.BLACK
+    solid = 0
+    bg = 1
+  end)
+  tiledef(object
+    id = T.GRASS
+    name = "grass"
+    glyph = GL.grass
+    main = CR.GREEN
+    accent = CR.BROWN
+    solid = 1
+    hard = 0
+    drop = T.DIRT
+  end)
+  tiledef(object
+    id = T.DIRT
+    name = "dirt"
+    glyph = GL.dirt
+    main = CR.BROWN
+    solid = 1
+    hard = 0
+    drop = T.DIRT
+  end)
+  tiledef(object
+    id = T.STONE
+    name = "stone"
+    glyph = GL.stone
+    main = CR.DKGRY
+    accent = CR.MDGRY
+    solid = 1
+    hard = 1
+    drop = T.STONE
+  end)
+  tiledef(object
+    id = T.BEDROCK
+    name = "bedrock"
+    glyph = GL.bedrock
+    main = CR.DKGRY
+    accent = CR.BLACK
+    solid = 1
+    hard = 99
+    drop = 0
+  end)
+  tiledef(object
+    id = T.SAND
+    name = "sand"
+    glyph = GL.sand
+    main = CR.YELLOW
+    accent = CR.BROWN
+    solid = 1
+    hard = 0
+    drop = T.SAND
+  end)
+  tiledef(object
+    id = T.GRAVEL
+    name = "gravel"
+    glyph = GL.gravel
+    main = CR.MDGRY
+    accent = CR.DKGRY
+    solid = 1
+    hard = 1
+    drop = T.GRAVEL
+  end)
+  tiledef(object
+    id = T.COAL
+    name = "coal ore"
+    glyph = GL.coal
+    main = CR.DKGRY
+    accent = CR.BLACK
+    solid = 1
+    hard = 2
+    drop = I.COAL
+  end)
+  tiledef(object
+    id = T.IRON
+    name = "iron ore"
+    glyph = GL.iron
+    main = CR.DKGRY
+    accent = CR.WHITE
+    solid = 1
+    hard = 2
+    drop = I.IRON
+  end)
+  tiledef(object
+    id = T.GOLD
+    name = "gold ore"
+    glyph = GL.gold
+    main = CR.DKGRY
+    accent = CR.YELLOW
+    solid = 1
+    hard = 3
+    drop = I.GOLD
+  end)
+  tiledef(object
+    id = T.DIAMOND
+    name = "diamond ore"
+    glyph = GL.diamond
+    main = CR.DKGRY
+    accent = CR.CYAN
+    solid = 1
+    hard = 3
+    drop = I.DIAMOND
+  end)
+  tiledef(object
+    id = T.WOOD
+    name = "wood"
+    glyph = GL.wood
+    main = CR.BROWN
+    accent = CR.DKBRN
+    solid = 1
+    hard = 0
+    drop = T.WOOD
+  end)
+  tiledef(object
+    id = T.LEAVES
+    name = "leaves"
+    glyph = GL.leaves
+    main = CR.GREEN
+    accent = CR.LTGRN
+    solid = 1
+    hard = 0
+    drop = I.STICK
+  end)
+  tiledef(object
+    id = T.PLANKS
+    name = "planks"
+    glyph = GL.planks
+    main = CR.LTRED
+    accent = CR.BROWN
+    solid = 1
+    hard = 0
+    drop = T.PLANKS
+    climb = 0
+  end)
+  tiledef(object
+    id = T.TORCH
+    name = "torch"
+    glyph = GL.torch
+    main = CR.BROWN
+    accent = CR.YELLOW
+    solid = 0
+    hard = 0
+    drop = T.TORCH
+    light = 3
+  end)
+  tiledef(object
+    id = T.CRAFT
+    name = "crafting table"
+    glyph = GL.craft
+    main = CR.LTRED
+    accent = CR.BROWN
+    solid = 1
+    hard = 0
+    drop = T.CRAFT
+  end)
+  tiledef(object
+    id = T.LADDER
+    name = "ladder"
+    glyph = GL.ladder
+    main = CR.BROWN
+    solid = 0
+    hard = 0
+    drop = T.LADDER
+    climb = 1
+  end)
+  tiledef(object
+    id = T.WATER
+    name = "water"
+    glyph = GL.water0
+    main = CR.BLUE
+    accent = CR.LTBLU
+    solid = 0
+    liquid = 1
+    hard = 99
+    drop = 0
+  end)
+  tiledef(object
+    id = T.LAVA
+    name = "lava"
+    glyph = GL.lava0
+    main = CR.RED
+    accent = CR.YELLOW
+    solid = 0
+    liquid = 1
+    hard = 99
+    drop = 0
+    light = 3
+  end)
 
-// -------------------------- items --------------------------
-
-ITEMS = object
-end
-
-itemdef = function(id, name, glyph, main, accent)
-  ITEMS[id] = object
-    id = id
-    name = name
-    glyph = glyph
-    main = main
-    accent = accent
+  // fast lookup: tile id -> definition
+  tileInfo = function(id)
+    return TILES[id]
   end
-end
 
-itemdef(I.STICK, "STICK", GL.i_stick, CR.BROWN, CR.DKBRN)
-itemdef(I.COAL, "COAL", GL.i_coal, CR.DKGRY, CR.BLACK)
-itemdef(I.IRON, "IRON", GL.i_iron, CR.MDGRY, CR.WHITE)
-itemdef(I.GOLD, "GOLD", GL.i_gold, CR.YELLOW, CR.BROWN)
-itemdef(I.DIAMOND, "DIAMOND", GL.i_diamond, CR.CYAN, CR.LTBLU)
-itemdef(I.PICK_WOOD, "WOOD PICK", GL.i_pick_wood, CR.LTRED, CR.BROWN)
-itemdef(I.PICK_STONE, "STONE PICK", GL.i_pick_stone, CR.MDGRY, CR.BROWN)
-itemdef(I.PICK_IRON, "IRON PICK", GL.i_pick_iron, CR.WHITE, CR.BROWN)
-itemdef(I.SWORD_WOOD, "WOOD SWORD", GL.i_sword_wood, CR.LTRED, CR.BROWN)
-itemdef(I.SWORD_IRON, "IRON SWORD", GL.i_sword_iron, CR.WHITE, CR.BROWN)
-itemdef(T.DIRT, "DIRT", GL.dirt, CR.BROWN, -1)
-itemdef(T.STONE, "STONE", GL.stone, CR.DKGRY, CR.MDGRY)
-itemdef(T.SAND, "SAND", GL.sand, CR.YELLOW, CR.BROWN)
-itemdef(T.GRAVEL, "GRAVEL", GL.gravel, CR.MDGRY, CR.DKGRY)
-itemdef(T.WOOD, "WOOD", GL.wood, CR.BROWN, CR.DKBRN)
-itemdef(T.LEAVES, "LEAVES", GL.leaves, CR.GREEN, CR.LTGRN)
-itemdef(T.PLANKS, "PLANKS", GL.planks, CR.LTRED, CR.BROWN)
-itemdef(T.TORCH, "TORCH", GL.torch, CR.BROWN, CR.YELLOW)
-itemdef(T.CRAFT, "CRAFTING", GL.craft, CR.LTRED, CR.BROWN)
-itemdef(T.LADDER, "LADDER", GL.ladder, CR.BROWN, -1)
+  isSolid = function(id)
+    if id == 0 then
+      return 0
+    end
+    return TILES[id].solid
+  end
+
+  // -------------------------- items --------------------------
+
+  ITEMS = object
+  end
+
+  itemdef = function(id, name, glyph, main, accent)
+    ITEMS[id] = object
+      id = id
+      name = name
+      glyph = glyph
+      main = main
+      accent = accent
+    end
+  end
+
+  itemdef(I.STICK, "STICK", GL.i_stick, CR.BROWN, CR.DKBRN)
+  itemdef(I.COAL, "COAL", GL.i_coal, CR.DKGRY, CR.BLACK)
+  itemdef(I.IRON, "IRON", GL.i_iron, CR.MDGRY, CR.WHITE)
+  itemdef(I.GOLD, "GOLD", GL.i_gold, CR.YELLOW, CR.BROWN)
+  itemdef(I.DIAMOND, "DIAMOND", GL.i_diamond, CR.CYAN, CR.LTBLU)
+  itemdef(I.PICK_WOOD, "WOOD PICK", GL.i_pick_wood, CR.LTRED, CR.BROWN)
+  itemdef(I.PICK_STONE, "STONE PICK", GL.i_pick_stone, CR.MDGRY, CR.BROWN)
+  itemdef(I.PICK_IRON, "IRON PICK", GL.i_pick_iron, CR.WHITE, CR.BROWN)
+  itemdef(I.SWORD_WOOD, "WOOD SWORD", GL.i_sword_wood, CR.LTRED, CR.BROWN)
+  itemdef(I.SWORD_IRON, "IRON SWORD", GL.i_sword_iron, CR.WHITE, CR.BROWN)
+  itemdef(T.DIRT, "DIRT", GL.dirt, CR.BROWN, -1)
+  itemdef(T.STONE, "STONE", GL.stone, CR.DKGRY, CR.MDGRY)
+  itemdef(T.SAND, "SAND", GL.sand, CR.YELLOW, CR.BROWN)
+  itemdef(T.GRAVEL, "GRAVEL", GL.gravel, CR.MDGRY, CR.DKGRY)
+  itemdef(T.WOOD, "WOOD", GL.wood, CR.BROWN, CR.DKBRN)
+  itemdef(T.LEAVES, "LEAVES", GL.leaves, CR.GREEN, CR.LTGRN)
+  itemdef(T.PLANKS, "PLANKS", GL.planks, CR.LTRED, CR.BROWN)
+  itemdef(T.TORCH, "TORCH", GL.torch, CR.BROWN, CR.YELLOW)
+  itemdef(T.CRAFT, "CRAFTING", GL.craft, CR.LTRED, CR.BROWN)
+  itemdef(T.LADDER, "LADDER", GL.ladder, CR.BROWN, -1)
+
+end
 
 // Pickaxe power: which ore hardness each tool can mine.
 // hand=0 -> hardness 0 only; wood pick=1 -> up to 1; iron pick=2 -> all

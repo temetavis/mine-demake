@@ -478,3 +478,40 @@ notes/keywords: `square duration 120 volume 40 C5`. There is no
 and 0 gets a fresh seed). Headless runs are therefore **not reproducible**
 unless you seed `Random` with a fixed value ≥ 1 yourself. Write tests that
 are world-agnostic, or re-seed for determinism.
+
+### 7.9 microStudio runs source files in NETWORK-ARRIVAL order, not alphabetical
+
+The player (`static/js/play/player.js` in the microStudio repo) fetches
+every `ms/*.ms` file with an XMLHttpRequest and inserts each into the
+sources object **as its response arrives**; `Runtime` then executes them
+in object-key insertion order (`for (file in this.sources)`). Arrival
+order is the browser's fetch completion order — effectively arbitrary.
+
+Consequence: **top-level code that references globals defined in another
+source file is broken.** Symptom in the microStudio console:
+
+```
+Warning: recipedef(T.PLANKS, 4, [[T.WOOD, 1]], 0) is not a function,
+in file "5_game" at line 196
+```
+
+…because `5_game` ran before `2_tiles` (which defines `recipedef`, `T`,
+`I`) had loaded. The per-file warning is a bit of a red herring: the
+missing symbol comes from a *different* file.
+
+Rules that hold:
+
+- **Function definitions** (`f = function() ... end`) are safe at top
+  level anywhere — they only define a Routine; the referenced globals
+  resolve when the function *runs*.
+- **Constant data** that references no other file (`C64 = [...]`,
+  `CR = object ... end`) is safe anywhere.
+- **Top-level CALLS** that touch other files' globals (`tiledef(...)`,
+  `defineRecipes()`) must move into `init()` — the runtime calls `init`
+  only after **all** source files have been loaded and executed.
+
+This project keeps all cross-file data construction in `defineTiles()`
+and `defineRecipes()`, both invoked at the top of `init()`
+(ms/5_game.ms). The headless harness reproduces the browser behavior
+with `{shuffle: true}` / `{reverse: true}` load orders
+(`test/loadorder.js`).

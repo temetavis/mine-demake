@@ -260,12 +260,27 @@ class MsRunner {
     this.sources = null;
   }
 
-  loadSources(dir = path.join(ROOT, "ms")) {
-    const names = fs.readdirSync(dir).filter((f) => f.endsWith(".ms")).sort();
+  loadSources(dir = null, opts = {}) {
+    if (!dir) dir = path.join(ROOT, "ms");
+    let names = fs.readdirSync(dir).filter((f) => f.endsWith(".ms")).sort();
     this.sources = names.map((n) => ({
       name: n,
       code: fs.readFileSync(path.join(dir, n), "utf8"),
     }));
+    if (opts.shuffle) {
+      // microStudio runs source files in network-arrival order, which is
+      // NOT alphabetical. Shuffle to prove no cross-file load-order
+      // dependencies exist (all such setup must live in init()).
+      for (let i = this.sources.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this.sources[i], this.sources[j]] = [this.sources[j], this.sources[i]];
+      }
+      names = this.sources.map((s) => s.name);
+    }
+    if (opts.reverse) {
+      this.sources = [...this.sources].reverse();
+      names = this.sources.map((s) => s.name);
+    }
     return names;
   }
 

@@ -135,7 +135,9 @@ r.env.keyboard.LEFT = 0;
 check(g.player.x < x0 - 1, `player walks left (${(x0 - g.player.x).toFixed(1)} tiles)`);
 check(g.player.onGround === 1, "player stays on ground while walking");
 
-// jump (wait until settled on ground first)
+// jump (wait until settled on ground first; remove mobs first so a
+// wandering slime can't knock the player mid-jump-test)
+g.mobs = [];
 let settle2 = 0;
 for (let i = 0; i < 120 && !settle2; i++) {
   r.frame();
