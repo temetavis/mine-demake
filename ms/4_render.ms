@@ -31,24 +31,26 @@ ovAccent = []
 // glyph pixel run cache: for each glyph, per row: [colStart, len, ink]
 GLYPH_RUNS = []
 
-// dim color lookup: SHADE[c][level] = palette index to draw instead
+// dim color lookup: SHADE[c][level] = palette index to draw instead.
+// Index by LIGHT LEVEL: level 3 = full color, 2 = dim, 1 = darker, 0 = black.
+// (Levels are ordered darkest-first here; resolveInk indexes [light].)
 SHADE = [
   [0,0,0,0],    // 0 black stays black
-  [1,15,11,0],  // 1 white -> lt.gray -> dk.gray -> black
-  [2,9,0,0],    // 2 red -> dark brown -> black
-  [3,11,11,0],  // 3 cyan -> dk.gray -> black
-  [4,11,0,0],   // 4 purple -> dk.gray -> black
-  [5,11,9,0],   // 5 green -> dk.gray -> dk.brn -> black
-  [6,11,0,0],   // 6 blue -> dk.gray -> black
-  [7,8,9,0],    // 7 yellow -> brown -> dk.brn -> black
-  [8,9,0,0],    // 8 brown -> dk.brn -> black
-  [9,9,0,0],    // 9 dark brown
-  [10,2,9,0],   // 10 lt.red -> red -> dk.brn -> black
-  [11,9,0,0],   // 11 dk.gray -> dk.brn -> black
-  [12,11,0,0],  // 12 md.gray -> dk.gray -> black
-  [13,5,11,0],  // 13 lt.green -> green -> dk.gray -> black
-  [14,6,11,0],  // 14 lt.blue -> blue -> dk.gray -> black
-  [15,11,11,0]  // 15 lt.gray -> dk.gray -> black
+  [0,11,15,1],  // 1 white: black -> dk.gray -> lt.gray -> white
+  [0,0,9,2],    // 2 red: black -> black -> dk.brn -> red
+  [0,11,11,3],  // 3 cyan: black -> dk.gray -> dk.gray -> cyan
+  [0,0,11,4],   // 4 purple: black -> black -> dk.gray -> purple
+  [0,9,11,5],   // 5 green: black -> dk.brn -> dk.gray -> green
+  [0,0,11,6],   // 6 blue: black -> black -> dk.gray -> blue
+  [0,9,8,7],    // 7 yellow: black -> dk.brn -> brown -> yellow
+  [0,0,9,8],    // 8 brown: black -> black -> dk.brn -> brown
+  [0,0,9,9],    // 9 dark brown
+  [0,9,2,10],   // 10 lt.red: black -> dk.brn -> red -> lt.red
+  [0,0,9,11],   // 11 dk.gray: black -> black -> dk.brn -> dk.gray
+  [0,0,11,12],  // 12 md.gray: black -> black -> dk.gray -> md.gray
+  [0,11,5,13],  // 13 lt.green: black -> dk.gray -> green -> lt.green
+  [0,11,6,14],  // 14 lt.blue: black -> dk.gray -> blue -> lt.blue
+  [0,11,11,15]  // 15 lt.gray: black -> dk.gray -> dk.gray -> lt.gray
 ]
 
 initRender = function()
@@ -190,6 +192,9 @@ cellSetBg = function(cx, cy, bg)
 end
 
 // overlay: ink 0 is transparent. glyph < 0 = skip.
+// Overlays are hardware-sprite-like: they render with their own colors
+// at full brightness and never modify the base cell they cover (the
+// tile underneath keeps its own world light).
 cellOverlay = function(cx, cy, glyph, main, accent, light)
   if cx < 0 or cx >= COLS or cy < 0 or cy >= ROWS then
     return 0
@@ -201,10 +206,6 @@ cellOverlay = function(cx, cy, glyph, main, accent, light)
   ovGlyph[i] = glyph
   ovMain[i] = main
   ovAccent[i] = accent
-  if light >= 0 then
-    // overlay light applies to base too (entity carries its own light)
-    cellLight[i] = max(cellLight[i], light)
-  end
   return 1
 end
 
@@ -480,6 +481,11 @@ resolveInk = function(ink, main, accent, ovMain, ovAccent, bg, light, fromOverla
         c = main
       end
     end
+  end
+  if fromOverlay then
+    // overlays (player, mobs, HUD) are hardware-sprite-like: they carry
+    // their own full-brightness colors and are not dimmed by cell light
+    return c
   end
   if light < 3 then
     return SHADE[c][light]

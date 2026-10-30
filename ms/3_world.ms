@@ -288,9 +288,8 @@ computeLight = function()
       if ti.light > 0 then
         l = ti.light
       end
-      if t == T.AIR then
-        l = max(l, skyLight(x, y))
-      end
+      // ambient sun light applies to every tile by depth
+      l = max(l, ambientLight(x, y))
       lightMap[y][x] = l
       if l > 0 then
         queue.push(x)
@@ -346,35 +345,24 @@ computeLight = function()
   return 1
 end
 
-// is this air tile lit by the sky? (walk up: any solid tile blocks sun)
-skyLight = function(x, y)
-  local yy = y - 1
-  while yy >= 0
-    local t = world[yy][x]
-    if t != T.AIR and TILES[t].bg == 0 then
-      if t == T.LEAVES then
-        // leaves let some light through; keep scanning
-        yy = yy - 1
-        // only a few leaves dim the light
-        local dim = 1
-        while yy >= 0 and dim < 3
-          if world[yy][x] == T.LEAVES then
-            dim = dim + 1
-            yy = yy - 1
-          else
-            break
-          end
-        end
-        if dim >= 3 then
-          return 1
-        end
-        return 3
-      end
-      return 0
-    end
-    yy = yy - 1
+// Ambient (sun) light by DEPTH relative to the surface column:
+// everything above/at the surface is fully lit (3); below the surface the
+// light fades over a few rows (3 -> 2 -> 1 -> 0) so shallow ground is
+// visible while deep caves stay black until torch-lit. Depth-based (not
+// sky-access-based) so hillside walls and areas under tree canopies are
+// lit too, and shallow cave mouths glow.
+ambientLight = function(x, y)
+  local s = surfaceCache[x]
+  local d = y - s
+  if d < 0 then
+    return 3
   end
-  return 3
+  // d = 0..2 -> 3, 3..5 -> 2, 6..8 -> 1, 9+ -> 0
+  local a = 3 - floor(d / 3)
+  if a < 0 then
+    a = 0
+  end
+  return a
 end
 
 getLight = function(x, y)

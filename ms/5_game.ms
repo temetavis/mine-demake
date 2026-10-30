@@ -861,8 +861,9 @@ drawHUD = function()
     cellPut(16 + n * 2, ROWS - 1, 0, CR.DKGRY, -1, 3)
     cellSetBg(16 + n * 2, ROWS - 1, CR.DKGRY)
     if n == sel then
-      // selected: white corner marks above the slot
-      cellOverlay(16 + n * 2, ROWS - 2, GL.cursor, CR.WHITE, -1, null)
+      // selected slot: lighter background + white arrow above it
+      cellSetBg(16 + n * 2, ROWS - 1, CR.MDGRY)
+      cellOverlay(16 + n * 2, ROWS - 2, GL.arrowdn, CR.WHITE, -1, null)
     end
     if id != 0 then
       cellOverlay(16 + n * 2, ROWS - 1, g, main, accent, null)
@@ -899,8 +900,8 @@ drawCraftMenu = function()
   while y < py0 + h
     local x = px0
     while x < px0 + w
-      cellPut(x, y, 0, CR.BLUE, -1, 3)
-      cellSetBg(x, y, CR.BLUE)
+      cellPut(x, y, 0, CR.PURPLE, -1, 3)
+      cellSetBg(x, y, CR.PURPLE)
       x = x + 1
     end
     y = y + 1

@@ -86,6 +86,7 @@ The game is fully verifiable outside the browser with the vendored
 microScript v2 engine (see `vendor/microscript-v2/`):
 
 ```bash
+node test/render.js     # lighting/overlay/HUD regression tests (SHADE direction, overlay brightness, hotbar selection)
 node test/charset.js    # glyph blitting regression tests (solid/mixed/full-width cells)
 node test/loadorder.js  # game must work in ANY source-file load order (microStudio loads files in network-arrival order!)
 node test/gameplay.js   # full gameplay scenario: mine, craft, place, light, die, restart
