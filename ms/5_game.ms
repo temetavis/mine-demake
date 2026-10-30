@@ -838,7 +838,7 @@ drawHUD = function()
     if h >= player.hp then
       g = GL.heartempty
     end
-    cellOverlay(1 + h, 1, g, CR.RED, -1, null)
+    cellOverlay(1 + h, 1, g, CR.RED, -1, 0)
     h = h + 1
   end
 
@@ -863,10 +863,10 @@ drawHUD = function()
     if n == sel then
       // selected slot: lighter background + white arrow above it
       cellSetBg(16 + n * 2, ROWS - 1, CR.MDGRY)
-      cellOverlay(16 + n * 2, ROWS - 2, GL.arrowdn, CR.WHITE, -1, null)
+      cellOverlay(16 + n * 2, ROWS - 2, GL.arrowdn, CR.WHITE, -1, 0)
     end
     if id != 0 then
-      cellOverlay(16 + n * 2, ROWS - 1, g, main, accent, null)
+      cellOverlay(16 + n * 2, ROWS - 1, g, main, accent, 0)
     end
     n = n + 1
   end

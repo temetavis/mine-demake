@@ -515,3 +515,59 @@ and `defineRecipes()`, both invoked at the top of `init()`
 (ms/5_game.ms). The headless harness reproduces the browser behavior
 with `{shuffle: true}` / `{reverse: true}` load orders
 (`test/loadorder.js`).
+
+### 7.10 `null` is not a keyword: bare `null` warns at every use site
+
+`null` is not in the tokenizer's predefined words. A bare `null` parses as
+an **identifier** and reads a nonexistent global — it evaluates to 0, and
+every use site fires a `using_undefined_variable` warning:
+
+```microscript
+a = null            // warning: null is not defined
+b = f(x, null)      // warning at this column, every call
+```
+
+Verified with a minimal probe: `a = null` → value 0, warning recorded at
+that line/column. Consequences for a "clean console":
+
+- Never write `null` in microScript. Use `0`, or a sentinel like `-1`.
+- The same applies to reading *optional object fields that were never set*:
+  with `0 == null` true (see 7.2), a missing field reads as "undefined" and
+  **warns** even though the value flows as 0. Data tables that gameplay
+  reads field-by-field (tile definitions etc.) should set EVERY field
+  explicitly on every entry — do not rely on "defaults filled later".
+- `invoking_non_function` warnings can appear when a helper is defined
+  inside another function (e.g. inside a `defineTiles()`-style data
+  builder) and something calls it before that builder ran. Keep helpers
+  at top level; only put data-construction CALLS inside init-time
+  builders.
+
+### 7.11 Live reload resets top-level state, but not everything
+
+When microStudio recompiles a source file, all top-level assignments run
+again (`lightMap = []`, `world = []`, ...) — but globals that the new
+compile does **not** touch keep their previous values (e.g. `G.scene`
+staying `"play"` from the running session). The next `update()` can then
+execute gameplay code against freshly-emptied data structures:
+`lightMap[y][x] = l` with `lightMap == []` indexes the number 0 → the
+"**0 is not defined, will be initialized to an empty object**" warning
+(`assigning_field_to_undefined`).
+
+Defensive pattern (see `worldReady()` in ms/3_world.ms):
+
+```microscript
+worldReady = function()
+  return lightMap.length == WORLD_H
+end
+
+computeLight = function()
+  if worldReady() == 0 then return 0 end
+  ...
+end
+```
+
+Readers (`getTile`, `getLight`) should likewise treat an unbuilt world as
+air/black instead of indexing empty lists. The headless harness reproduces
+the live-reload state with `runner.run()` (top level only, no `init()`) +
+setting the surviving globals, and `test/warnings.js` asserts zero VM
+warnings in both normal play and the reload window.

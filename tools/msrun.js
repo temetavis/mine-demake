@@ -235,6 +235,7 @@ function makeMockEnv(opts = {}) {
         assignment_as_condition: {},
         using_undefined_variable: {},
         assigning_field_to_undefined: {},
+        invoking_non_function: {},
       },
     },
   };

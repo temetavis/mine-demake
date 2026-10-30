@@ -108,7 +108,7 @@ end
 //   black -> 0, white -> 1, red -> 2, cyan -> 3
 loadCharsetFromSprite = function()
   local spr = sprites["charrom"]
-  if spr == null then
+  if spr == 0 then
     return 0
   end
   if spr.ready == 0 then
@@ -219,7 +219,7 @@ cellOverlayText = function(cx, cy, s, main, accent)
       code = code - 32
     end
     if x >= 0 and x < COLS then
-      cellOverlay(x, cy, code, main, accent, null)
+      cellOverlay(x, cy, code, main, accent, 0)
     end
     x = x + 1
     i = i + 1
@@ -425,17 +425,28 @@ blitCells = function()
         local accent = cellAccent[i]
         local bg = cellBg[i]
         local light = cellLight[i]
-        local rowRuns = GLYPH_RUNS[cellGlyph[i]][r]
+        local rowRuns = 0
+        if GLYPH_RUNS.length > 0 then
+          rowRuns = GLYPH_RUNS[cellGlyph[i]][r]
+          if rowRuns == 0 then
+            rowRuns = GLYPH_RUNS[0][r]
+          end
+        end
         local ov = ovGlyph[i]
-        local ovRuns = null
-        if ov >= 0 then
+        local ovRuns = 0
+        if ov >= 0 and GLYPH_RUNS.length > 0 then
           ovRuns = GLYPH_RUNS[ov][r]
         end
         local c = 0
+        if rowRuns == 0 then
+          // no glyph data yet (e.g. draw before init on a live reload):
+          // skip this cell
+          c = 4
+        end
         while c < 4
           local ink = rowRuns[c]
           local fromOv = 0
-          if ovRuns != null and ovRuns[c] > 0 then
+          if ovRuns != 0 and ovRuns[c] > 0 then
             ink = ovRuns[c]
             fromOv = 1
           end

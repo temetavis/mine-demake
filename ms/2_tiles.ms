@@ -72,7 +72,7 @@ TILES = []
 // therefore sets ALL fields explicitly; this function only fills in a
 // display name when missing.
 tiledef = function(def)
-  if def.name == null then
+  if def.name == 0 then
     def.name = "?"
   end
   TILES.push(def)
@@ -92,7 +92,13 @@ defineTiles = function()
     name = "air"
     glyph = 0
     main = CR.BLACK
+    accent = -1
     solid = 0
+    hard = 1
+    drop = 0
+    light = 0
+    liquid = 0
+    climb = 0
     bg = 1
   end)
   tiledef(object
@@ -104,15 +110,24 @@ defineTiles = function()
     solid = 1
     hard = 0
     drop = T.DIRT
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.DIRT
     name = "dirt"
     glyph = GL.dirt
     main = CR.BROWN
+    accent = -1
     solid = 1
     hard = 0
     drop = T.DIRT
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.STONE
@@ -123,6 +138,10 @@ defineTiles = function()
     solid = 1
     hard = 1
     drop = T.STONE
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.BEDROCK
@@ -133,6 +152,10 @@ defineTiles = function()
     solid = 1
     hard = 99
     drop = 0
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.SAND
@@ -143,6 +166,10 @@ defineTiles = function()
     solid = 1
     hard = 0
     drop = T.SAND
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.GRAVEL
@@ -153,6 +180,10 @@ defineTiles = function()
     solid = 1
     hard = 1
     drop = T.GRAVEL
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.COAL
@@ -163,6 +194,10 @@ defineTiles = function()
     solid = 1
     hard = 2
     drop = I.COAL
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.IRON
@@ -173,6 +208,10 @@ defineTiles = function()
     solid = 1
     hard = 2
     drop = I.IRON
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.GOLD
@@ -183,6 +222,10 @@ defineTiles = function()
     solid = 1
     hard = 3
     drop = I.GOLD
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.DIAMOND
@@ -193,6 +236,10 @@ defineTiles = function()
     solid = 1
     hard = 3
     drop = I.DIAMOND
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.WOOD
@@ -203,6 +250,10 @@ defineTiles = function()
     solid = 1
     hard = 0
     drop = T.WOOD
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.LEAVES
@@ -213,6 +264,10 @@ defineTiles = function()
     solid = 1
     hard = 0
     drop = I.STICK
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.PLANKS
@@ -223,7 +278,10 @@ defineTiles = function()
     solid = 1
     hard = 0
     drop = T.PLANKS
+    light = 0
+    liquid = 0
     climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.TORCH
@@ -235,6 +293,9 @@ defineTiles = function()
     hard = 0
     drop = T.TORCH
     light = 3
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.CRAFT
@@ -245,16 +306,24 @@ defineTiles = function()
     solid = 1
     hard = 0
     drop = T.CRAFT
+    light = 0
+    liquid = 0
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.LADDER
     name = "ladder"
     glyph = GL.ladder
     main = CR.BROWN
+    accent = -1
     solid = 0
     hard = 0
     drop = T.LADDER
+    light = 0
+    liquid = 0
     climb = 1
+    bg = 0
   end)
   tiledef(object
     id = T.WATER
@@ -263,9 +332,12 @@ defineTiles = function()
     main = CR.BLUE
     accent = CR.LTBLU
     solid = 0
-    liquid = 1
     hard = 99
     drop = 0
+    light = 0
+    liquid = 1
+    climb = 0
+    bg = 0
   end)
   tiledef(object
     id = T.LAVA
@@ -274,39 +346,15 @@ defineTiles = function()
     main = CR.RED
     accent = CR.YELLOW
     solid = 0
-    liquid = 1
     hard = 99
     drop = 0
     light = 3
+    liquid = 1
+    climb = 0
+    bg = 0
   end)
-
-  // fast lookup: tile id -> definition
-  tileInfo = function(id)
-    return TILES[id]
-  end
-
-  isSolid = function(id)
-    if id == 0 then
-      return 0
-    end
-    return TILES[id].solid
-  end
-
-  // -------------------------- items --------------------------
-
   ITEMS = object
   end
-
-  itemdef = function(id, name, glyph, main, accent)
-    ITEMS[id] = object
-      id = id
-      name = name
-      glyph = glyph
-      main = main
-      accent = accent
-    end
-  end
-
   itemdef(I.STICK, "STICK", GL.i_stick, CR.BROWN, CR.DKBRN)
   itemdef(I.COAL, "COAL", GL.i_coal, CR.DKGRY, CR.BLACK)
   itemdef(I.IRON, "IRON", GL.i_iron, CR.MDGRY, CR.WHITE)
@@ -327,7 +375,31 @@ defineTiles = function()
   itemdef(T.TORCH, "TORCH", GL.torch, CR.BROWN, CR.YELLOW)
   itemdef(T.CRAFT, "CRAFTING", GL.craft, CR.LTRED, CR.BROWN)
   itemdef(T.LADDER, "LADDER", GL.ladder, CR.BROWN, -1)
+end
 
+// ---- helpers (top level: safe in any load order) ----
+// fast lookup: tile id -> definition
+tileInfo = function(id)
+  return TILES[id]
+end
+isSolid = function(id)
+  if id == 0 then
+    return 0
+  end
+  if id >= TILES.length then
+    return 0
+  end
+  return TILES[id].solid
+end
+// -------------------------- items --------------------------
+itemdef = function(id, name, glyph, main, accent)
+  ITEMS[id] = object
+    id = id
+    name = name
+    glyph = glyph
+    main = main
+    accent = accent
+  end
 end
 
 // Pickaxe power: which ore hardness each tool can mine.

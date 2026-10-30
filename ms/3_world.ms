@@ -257,6 +257,9 @@ getTile = function(x, y)
   if x < 0 or x >= WORLD_W or y < 0 or y >= WORLD_H then
     return T.BEDROCK
   end
+  if world.length == 0 then
+    return T.AIR
+  end
   return world[y][x]
 end
 
@@ -274,8 +277,18 @@ end
 // Light levels 0..3. Sky tiles above ground are lit by the sun.
 // Light sources (torches, lava) push light into neighbors, decreasing
 // by 1 per tile. Recompute only when something changed (lightDirty).
+worldReady = function()
+  // lightMap rows are built by initWorld; if it has not run yet
+  // (e.g. after a live reload, before init() rebuilds the world),
+  // lighting must not touch it
+  return lightMap.length == WORLD_H
+end
+
 computeLight = function()
   if lightDirty == 0 then
+    return 0
+  end
+  if worldReady() == 0 then
     return 0
   end
   lightDirty = 0
@@ -367,6 +380,9 @@ end
 
 getLight = function(x, y)
   if x < 0 or x >= WORLD_W or y < 0 or y >= WORLD_H then
+    return 0
+  end
+  if lightMap.length == 0 then
     return 0
   end
   return lightMap[y][x]
